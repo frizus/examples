@@ -1,0 +1,33 @@
+.side-panel-action {
+    width: 32px;
+    height: 32px;
+    display: block;
+    text-align: center;
+    line-height: 32px;
+    background-color: #fff;
+    border-radius: 3px;
+    font-size: 0;
+}
+.side-panel-action > svg {
+    display: inline-block;
+    margin-top: 1px;
+    vertical-align: middle;
+}
+.side-panel-action > svg path {
+    fill: #999;
+}
+.side-panel-action:hover {
+    background-color: #d2334d;
+}
+.side-panel-action:hover > svg path {
+    fill: #fff;
+}
+.side-panel-action.added {
+    background-color: #d22e48;
+}
+.side-panel-action.added:hover {
+    background-color: #b1727a;
+}
+button.side-panel-action {
+    border: none;
+}

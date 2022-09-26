@@ -1,0 +1,45 @@
+.price-discount-container {
+    display: inline-block;
+    padding: 1px;
+    background: #ffd83a;
+    white-space: nowrap;
+    font-size: 11px;
+    line-height: 14px;
+}
+.price-discount-container .percent {
+    display: inline-block;
+    padding: 0px 3px 0px 5px;
+    color: #333;
+}
+.price-discount-container .save {
+    background: #fff8db;
+    display: inline-block;
+    padding: 2px 5px 1px;
+    border-radius: 1px;
+    color: #333;
+}
+
+.price-value-container {
+    line-height: 0;
+}
+
+.estimated,
+.price-value-container .value {
+    font-size: 17px;
+    line-height: 24px;
+    display: inline-block;
+    vertical-align: top;
+    font-weight: bold;
+    color: #333;
+}
+.price-value-container .value {
+    margin: 0 3px;
+}
+.price-value-container .old-value {
+    font-size: 13px;
+    line-height: 22px;
+    display: inline-block;
+    margin: 0 3px;
+    color: #999;
+    text-decoration: line-through;
+}

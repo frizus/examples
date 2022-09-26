@@ -1,0 +1,81 @@
+.recommended-products {
+    margin-top: 28px;
+}
+.recommended-products > .title {
+    margin-bottom: 23px;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 25px;
+    color: #333;
+}
+.recommended-products > .items > .item {
+    padding: 12px 19px;
+    background: #fff;
+    border-left: 1px solid #ececec;
+    border-right: 1px solid #ececec;
+    border-bottom: 1px solid #ececec;
+}
+.recommended-products > .items > .item > a {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    display: flex;
+}
+.recommended-products > .items > .item:first-child {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-top: 1px solid #ececec;
+    padding-top: 10px;
+}
+.recommended-products > .items > .item:last-child {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+.recommended-products > .items > .item:hover {
+    border-color: #fff;
+    box-shadow: 0px 10px 20px 0px rgb(0 0 0 / 10%);
+    -webkit-transform: translateY(-1px);
+    transform: translateY(-1px);
+    background-color: #fff;
+    transition: transform .2s, box-shadow .2s;
+    position: relative;
+    z-index: 1;
+}
+.recommended-products > .items > .item .image {
+    width: 80px;
+    height: 80px;
+    line-height: 78px;
+    flex-shrink: 0;
+    align-self: normal;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.recommended-products > .items > .item .image img {
+    display: inline-block;
+    max-height: 100%;
+    max-width: 100%;
+    height: auto;
+}
+.recommended-products > .items > .item .body {
+    margin-left: 14px;
+}
+.recommended-products > .items > .item .name {
+    color: #333;
+    font-size: 13px;
+    line-height: 18px;
+}
+.recommended-products > .items > .item .price-block {
+    margin-top: 10px;
+}
+.recommended-products > .items > .item > a:hover .name {
+    color: #d2334d;
+}
+.recommended-products > .items > .item .estimated,
+.recommended-products > .items > .item .price-value-container .value {
+    font-size: 14px;
+    line-height: 20px;
+}
+.recommended-products > .items > .item .price-discount-container .save {
+    color: #777;
+}

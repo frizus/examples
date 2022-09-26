@@ -1,0 +1,34 @@
+.stickers-parent {
+    position: relative;
+}
+.refactor-stickers {
+    position: absolute;
+    left: -2px;
+    top: 0;
+    z-index: 1;
+    padding-right: 50px;
+}
+.refactor-stickers > .sticker {
+    padding: 2px 7px;
+    margin: 0 2px 4px;
+    letter-spacing: normal;
+    font-size: 12px;
+    line-height: 20px;
+    display: inline-block;
+    color: #fff;
+    border-radius: 2px;
+    letter-spacing: normal;
+}
+.refactor-stickers > .sticker.sticker-hit {
+    background-color: #2992d9;
+}
+.refactor-stickers > .sticker.sticker-recommend {
+    background-color: #893ca9;
+}
+.refactor-stickers > .sticker.sticker-new {
+    background-color: #60c339;
+}
+.refactor-stickers > .sticker.sticker-stock {
+    background-color: #ffd83a;
+    color: #333;
+}

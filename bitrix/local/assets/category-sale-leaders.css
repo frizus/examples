@@ -1,0 +1,10 @@
+.category-sale-leaders {
+    margin-top: 25px;
+}
+.category-sale-leaders > .title {
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 28px;
+    color: #333;
+}

@@ -1,0 +1,320 @@
+/**
+ * Add any custom CSS here.
+ *
+ * This file will be loaded after all other theme stylesheets.
+ */
+@media (min-width: 768px) {
+    .woocommerce-active .site-header .main-navigation {
+        width: 100%;
+        margin-right: 0;
+    }
+    .site-header .site-branding {
+        width: 34.78260869565%;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .site-header .secondary-navigation {
+        width: 34.78260869565%;
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: -4px;
+        text-align: right;
+    }
+    .site-header .site-search {
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: -4px;
+    }
+    .storefront-secondary-navigation.woocommerce-active .site-header .site-branding {
+        float: none;
+    }
+    .storefront-secondary-navigation.woocommerce-active .site-header .secondary-navigation {
+        float: none;
+    }
+    .woocommerce-active .site-header .site-search {
+        float: none;
+    }
+    #masthead > .col-full {
+        padding-bottom: 1.059em;
+    }
+}
+@media (max-width: 767px) {
+    .site-branding, .site-search, .site-header-cart, .site-logo-anchor, .custom-logo-link {
+        margin-bottom: 1.059em;
+    }
+    .secondary-navigation {
+        margin-bottom: 1.059em;
+    }
+    .site-header .site-branding {
+        width: 50%;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .site-header .secondary-navigation {
+        width: 50%;
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: -4px;
+        text-align: right;
+    }
+    .secondary-navigation li.button > a {
+        padding: 0.3090234858em 0.707875em;
+    }
+    .site-branding .site-description {
+        display: block;
+        margin-bottom: 0;
+    }
+}
+@media screen and (min-width: 768px) {
+    .site-branding,
+    .site-search,
+    .site-header-cart,
+    .site-logo-anchor,
+    .custom-logo-link {
+        margin-bottom: 1.059em;
+    }
+    .site-header {
+        padding-top: 1.059em;
+    }
+    .site-branding, .site-search, .site-header-cart, .site-logo-anchor, .custom-logo-link {
+        margin-bottom: 0;
+    }
+    .secondary-navigation {
+        margin-bottom: 0;
+        margin-left: -4px;
+    }
+    .secondary-navigation ul.menu li.button > a:hover {
+        color: #2b2b2b;
+    }
+    .site-header ul.menu li.current-menu-item.button > a {
+        color: #2b2b2b;
+    }
+    .site-search {
+        margin-left: -4px;
+    }
+}
+
+.secondary-navigation ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    display: block;
+}
+.secondary-navigation li.button {
+    padding: 0;
+}
+.secondary-navigation li.button > a {
+    color: #2b2b2b;
+    font-weight: 600;
+    display: inline-block;
+}
+.site-header .site-logo-anchor img, .site-header .site-logo-link img, .site-header .custom-logo-link img {
+    width: auto;
+}
+.site-header .site-logo-anchor, .site-header .site-logo-link, .site-header .custom-logo-link {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 0;
+}
+.woocommerce-active .site-branding {
+    float: none;
+}
+@media (max-width: 767px) {
+    .site-search {
+        display: none;
+    }
+}
+.site-branding .logo {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 0;
+}
+.site-branding .site-title-and-description {
+    display: inline-block;
+    vertical-align: middle;
+    padding-left: 0.25em;
+}
+.site-branding .site-title-and-description a {
+    font-family: Arial;
+    font-weight: bold;
+    color: #16a1cb;
+}
+p.site-description {
+    line-height: 0.9em;
+    color: #ddd;
+}
+.secondary-navigation {
+    display: block;
+    width: 100%;
+}
+.wp-block-image img.main-picture {
+    max-width: 100%;
+    width: 600px;
+}
+.wc-block-product-categories-list-item {
+    text-align: left;
+}
+.katalog-h {
+    margin-top: 1.25em;
+}
+@media(max-width: 66.4989378333em) {
+    body.iframe .col-full {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+@media(max-width: 568px) {
+    body.iframe .col-full {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+@media (min-width: 768px) {
+    body.iframe .col-full {
+        max-width: none;
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0 2.617924em;
+        box-sizing: border-box;
+    }
+}
+body.iframe {
+    min-width: 270px;
+    overflow: auto;
+}
+body.iframe .close {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    color: #43454b;
+}
+body.iframe .close.has-scroll {
+    right: 1.5em;
+}
+body.iframe .close:before {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-size: 1.3em;
+    line-height: 1;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    vertical-align: baseline;
+    content: "\f00d";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -10px;
+    margin-left: -7px;
+}
+
+.overlay-popup {
+    display:none;
+    position:fixed;
+    z-index: 999;
+    top:0;
+    right:0;
+    left:0;
+    bottom:0;
+    background:#000;
+    opacity:0.5;
+}
+.popup {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    width: 410px;
+    height: 600px;
+    max-width: 100%;
+    max-height: 100%;
+}
+.popup iframe {
+    width: 100%;
+    height: 100%;
+    background-color: #eee;
+    border: 0;
+}
+body {
+    overflow: auto;
+}
+.close-iframe {
+    display: none;
+}
+body.iframe .close-iframe {
+    display: inline-block;
+}
+body.iframe .hentry {
+    margin-bottom: 0;
+}
+body.iframe .site-main {
+    margin-bottom: 0;
+}
+body.iframe .site-content .col-full {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    box-shadow: none;
+}
+body.iframe .hentry .entry-header h1 {
+    font-size: 1.963443em;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+body.iframe .wpcf7-form-control.wpcf7-acceptance {
+    font-size: 0.8em;
+}
+body.iframe .wpcf7-form {
+    margin-bottom: 0;
+}
+body.iframe .wpcf7-form p {
+    margin: 0 0 1.0618125em;
+}
+body.iframe .wpcf7-form p:last-of-type {
+    margin-bottom: 0;
+}
+body.iframe .wpcf7-form textarea {
+    height: 250px;
+}
+body.iframe .wpcf7-form input[type=text],
+body.iframe .wpcf7-form input[type=number],
+body.iframe .wpcf7-form input[type=email],
+body.iframe .wpcf7-form input[type=tel],
+body.iframe .wpcf7-form input[type=url],
+body.iframe .wpcf7-form input[type=password],
+body.iframe .wpcf7-form input[type=search],
+body.iframe .wpcf7-form textarea,
+body.iframe .wpcf7-form .input-text {
+    padding: 0.4635352287em;
+    font-size: 75%;
+    width: 350px;
+}
+body.iframe .wpcf7-form button,
+body.iframe .wpcf7-form input[type=button],
+body.iframe .wpcf7-form input[type=reset],
+body.iframe .wpcf7-form input[type=submit],
+body.iframe .wpcf7-form .button,
+body.iframe .wpcf7-form .wc-block-grid__products .wc-block-grid__product .wp-block-button__link,
+body.iframe .wpcf7-form .added_to_cart {
+    padding: 0.4635352287em 1.0618125em;
+    font-size: 75%;
+}
+body.iframe .wpcf7-spinner {
+    vertical-align: middle;
+    margin: 0 12px;
+}
+body.iframe .wpcf7-response-output {
+    font-size: 0.75em;
+}
+body.iframe .wpcf7-not-valid-tip {
+    font-size: 0.75em;
+}
+.main-categories {
+    font-size: 1.2em;
+}
+.widget.woocommerce li .count {
+    float: none;
+}

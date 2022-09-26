@@ -1,0 +1,29 @@
+.refactor-rating {
+    height: 20px;
+    margin-bottom: 6px;
+}
+.refactor-rating > .rating-point {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 2px;
+}
+.refactor-rating > .rating-point:first-child {
+    padding-left: 0;
+}
+.refactor-rating > .rating-point > svg path {
+    fill: #ddd;
+}
+.refactor-rating > .rating-point > svg rect {
+    fill-opacity: 0;
+}
+.refactor-rating > .rating-point.rating-point-set > svg path {
+    fill: #e6c553;
+}
+.refactor-rating > .rating-count {
+    font-size: 12px;
+    line-height: 20px;
+    margin-top: 1px;
+    margin-left: 8px;
+    display: inline-block;
+    vertical-align: middle;
+}
