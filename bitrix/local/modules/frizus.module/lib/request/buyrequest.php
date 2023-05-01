@@ -1,4 +1,5 @@
 <?php
+
 namespace Frizus\Module\Request;
 
 use Bitrix\Iblock\Elements\ElementCatalogTable;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Frizus\Module\Aggregator;
 
 use Frizus\Module\Aggregator\ProductChanges\FieldResolver;
@@ -51,16 +52,6 @@ class ImportProduct
         return $this->element['PROPERTIES']['AGGREGATOR_SYNC']['VALUE'] === 'N';
     }
 
-    public function existedBefore()
-    {
-        return isset($this->element);
-    }
-
-    protected function originalExists()
-    {
-        return $this->existedBefore();
-    }
-
     public function save()
     {
         if (!$this->prepareChanges()) {
@@ -84,25 +75,6 @@ class ImportProduct
         }
 
         return $saved;
-    }
-
-    public function restore()
-    {
-        if (!$this->needRestoring()) {
-            return null;
-        }
-
-        if (!$this->existedBefore()) {
-            return $this->deleteBrokenProduct();
-        }
-
-        $this->prepareRestoreData();
-
-        if ($restored = $this->continueRestoring()) {
-            $this->deleteOriginalFilesBackup();
-        }
-
-        return $restored;
     }
 
     protected function prepareChanges()
@@ -176,6 +148,16 @@ class ImportProduct
 
     }
 
+    protected function originalExists()
+    {
+        return $this->existedBefore();
+    }
+
+    public function existedBefore()
+    {
+        return isset($this->element);
+    }
+
     protected function backupOriginalFiles()
     {
 
@@ -189,6 +171,25 @@ class ImportProduct
     protected function deleteOriginalFilesBackup()
     {
 
+    }
+
+    public function restore()
+    {
+        if (!$this->needRestoring()) {
+            return null;
+        }
+
+        if (!$this->existedBefore()) {
+            return $this->deleteBrokenProduct();
+        }
+
+        $this->prepareRestoreData();
+
+        if ($restored = $this->continueRestoring()) {
+            $this->deleteOriginalFilesBackup();
+        }
+
+        return $restored;
     }
 
     protected function needRestoring()
@@ -210,12 +211,12 @@ class ImportProduct
 
     }
 
-    protected function prepareRestoreChanges()
+    protected function continueRestoring()
     {
 
     }
 
-    protected function continueRestoring()
+    protected function prepareRestoreChanges()
     {
 
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Frizus\Module\Validation\Traits;
 
 trait FormatsMessages
@@ -11,7 +12,7 @@ trait FormatsMessages
     protected function getMessage($attribute, $rule)
     {
         $lowerRule = strtolower($rule);
-        $keys = ["$attribute.$lowerRule", $lowerRule];
+        $keys = ["$attribute:$lowerRule", $attribute, ':' . $lowerRule];
 
         foreach ($keys as $key) {
             if (array_key_exists($key, $this->customMessages)) {
@@ -19,6 +20,6 @@ trait FormatsMessages
             }
         }
 
-        return 'Валидация ' . $key . ' провалилась.';
+        return 'Валидация ' . $key . ' не удалась.';
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Frizus\Module\Cron;
 
 use Bitrix\Iblock\Elements\ElementCatalogTable;
@@ -15,6 +16,9 @@ use Bitrix\Main\Type\DateTime;
 use Bitrix\Sale\Basket;
 use Bitrix\Sale\BasketItem;
 use Bitrix\Sale\Order;
+use CIBlock;
+use CIBlockElement;
+use Exception;
 use Frizus\Module\Helper\SaleLeaderHelper;
 
 class SetBuyAlongBlockCron
@@ -38,10 +42,10 @@ class SetBuyAlongBlockCron
         ];
 
         if (!Loader::includeModule('sale')) {
-            throw new \Exception;
+            throw new Exception;
         }
         if (!Loader::includeModule('iblock')) {
-            throw new \Exception;
+            throw new Exception;
         }
     }
 
@@ -164,7 +168,7 @@ class SetBuyAlongBlockCron
                                     'VALUE' => new DateTime(),
                                 ],
                             ];
-                            \CIBlockElement::SetPropertyValuesEx($row['ID'], $row['IBLOCK_ID'], $propertyValues);
+                            CIBlockElement::SetPropertyValuesEx($row['ID'], $row['IBLOCK_ID'], $propertyValues);
                             $this->stats['updated_bindings']++;
                         } else {
                             $this->stats['unchanged']++;
@@ -179,7 +183,7 @@ class SetBuyAlongBlockCron
 
         if ($this->arguments['withRemove']) {
             foreach ($this->needClearBuyAlong($exclude) as $row) {
-                \CIBlockElement::SetPropertyValuesEx($row['ID'], $row['IBLOCK_ID'], [
+                CIBlockElement::SetPropertyValuesEx($row['ID'], $row['IBLOCK_ID'], [
                     'EXPANDABLES' => false,
                     'BUY_ALONG_UPDATED_AT' => [
                         'VALUE' => new DateTime(),
@@ -190,7 +194,7 @@ class SetBuyAlongBlockCron
         }
 
         if (($this->stats['updated_bindings'] > 0) || ($this->stats['cleanup'] > 0)) {
-            \CIBlock::clearIblockTagCache(FRIZUS_CATALOG);
+            CIBlock::clearIblockTagCache(FRIZUS_CATALOG);
         }
     }
 
@@ -217,6 +221,51 @@ class SetBuyAlongBlockCron
             $orderIds[] = intval($row['ORDER_ID']);
         }
         return $orderIds;
+    }
+
+    protected function getBasketProducts($canceled, $orderIds)
+    {
+//        \Bitrix\Main\Application::getConnection()->startTracker(false);
+        $filter = [
+            '!==ORDER.ID' => null,
+            '=MODULE' => 'catalog',
+            '=PRODUCT.IBLOCK.IBLOCK_ID' => FRIZUS_CATALOG,
+            '@ORDER_ID' => $orderIds,
+        ];
+        if ($canceled) {
+            $filter['=ORDER.CANCELED'] = true;
+        } else {
+            $filter['!=ORDER.CANCELED'] = true;
+        }
+        $result = Basket::getList([
+            'select' => [
+                'PRODUCT_ID',
+                'ORDER_IDS' => new ExpressionField('ORDER_IDS', 'GROUP_CONCAT(%s SEPARATOR ",")', ['ORDER_ID'])
+            ],
+            'filter' => $filter,
+            'group' => ['PRODUCT_ID']
+        ]);
+//        \Bitrix\Main\Application::getConnection()->stopTracker();
+//        echo $result->getTrackerQuery()->getSql();die();
+        return $result;
+    }
+
+    protected function getBuyAlongProducts($productId, $orderIds)
+    {
+//        \Bitrix\Main\Application::getConnection()->startTracker(false);
+        $result = Basket::getList([
+            'select' => ['PRODUCT_ID'],
+            'filter' => [
+                '@ORDER_ID' => explode(',', $orderIds),
+                '!=PRODUCT_ID' => $productId,
+                '=MODULE' => 'catalog',
+                '=PRODUCT.IBLOCK.IBLOCK_ID' => FRIZUS_CATALOG,
+            ],
+            'group' => ['PRODUCT_ID']
+        ]);
+//        \Bitrix\Main\Application::getConnection()->stopTracker();
+//        echo $result->getTrackerQuery()->getSql();die();
+        return $result;
     }
 
     protected function needClearBuyAlong($exclude)
@@ -254,51 +303,6 @@ class SetBuyAlongBlockCron
             }
             $lastId = $row['ID'];
         }
-    }
-
-    protected function getBuyAlongProducts($productId, $orderIds)
-    {
-//        \Bitrix\Main\Application::getConnection()->startTracker(false);
-        $result = Basket::getList([
-            'select' => ['PRODUCT_ID'],
-            'filter' => [
-                '@ORDER_ID' => explode(',', $orderIds),
-                '!=PRODUCT_ID' => $productId,
-                '=MODULE' => 'catalog',
-                '=PRODUCT.IBLOCK.IBLOCK_ID' => FRIZUS_CATALOG,
-            ],
-            'group' => ['PRODUCT_ID']
-        ]);
-//        \Bitrix\Main\Application::getConnection()->stopTracker();
-//        echo $result->getTrackerQuery()->getSql();die();
-        return $result;
-    }
-
-    protected function getBasketProducts($canceled, $orderIds)
-    {
-//        \Bitrix\Main\Application::getConnection()->startTracker(false);
-        $filter = [
-            '!==ORDER.ID' => null,
-            '=MODULE' => 'catalog',
-            '=PRODUCT.IBLOCK.IBLOCK_ID' => FRIZUS_CATALOG,
-            '@ORDER_ID' => $orderIds,
-        ];
-        if ($canceled) {
-            $filter['=ORDER.CANCELED'] = true;
-        } else {
-            $filter['!=ORDER.CANCELED'] = true;
-        }
-        $result = Basket::getList([
-            'select' => [
-                'PRODUCT_ID',
-                'ORDER_IDS' => new ExpressionField('ORDER_IDS', 'GROUP_CONCAT(%s SEPARATOR ",")', ['ORDER_ID'])
-            ],
-            'filter' => $filter,
-            'group' => ['PRODUCT_ID']
-        ]);
-//        \Bitrix\Main\Application::getConnection()->stopTracker();
-//        echo $result->getTrackerQuery()->getSql();die();
-        return $result;
     }
 
     public function hasErrors()

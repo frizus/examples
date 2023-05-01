@@ -1,21 +1,14 @@
 <?php
+
 namespace Frizus\Module\Rule;
 
+use CIBlockElement;
 use Frizus\Module\Rule\Base\Rule;
 use Frizus\Module\Rule\Base\ValidatorAwareRule;
-use Frizus\Module\Validation\Validator;
 
-class ValidateProductIdRule implements Rule, ValidatorAwareRule
+class ValidateProductIdRule extends Rule
 {
-    /**
-     * @var Validator
-     */
-    protected $validator;
-
-    public function setValidator($validator)
-    {
-        $this->validator = $validator;
-    }
+    use ValidatorAwareRule;
 
     public function passes($attribute, $value, $keyExists)
     {
@@ -27,7 +20,7 @@ class ValidateProductIdRule implements Rule, ValidatorAwareRule
             return false;
         }
 
-        $result = \CIBlockElement::GetList(
+        $result = CIBlockElement::GetList(
             [],
             [
                 'IBLOCK_ID' => FRIZUS_CATALOG,

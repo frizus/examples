@@ -1,11 +1,10 @@
 <?php
-namespace Frizus\Module\Request\Base;
 
-use Frizus\Module\Validation\Validator;
+namespace Frizus\Module\Request\Base;
 
 class FormRequest extends AjaxRequest
 {
-    protected function failedValidation()
+    protected function failedValidation($validator)
     {
         throw new ValidationException($validator);
     }

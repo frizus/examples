@@ -1,7 +1,9 @@
 <?php
+
 namespace Frizus\Module\Controller\Traits;
 
 use Bitrix\Main\Loader;
+use Exception;
 
 trait LoadModule
 {
@@ -9,7 +11,7 @@ trait LoadModule
     {
         foreach ((array)$modules as $module) {
             if (!Loader::includeModule($module)) {
-                throw new \Exception;
+                throw new Exception;
             }
         }
     }

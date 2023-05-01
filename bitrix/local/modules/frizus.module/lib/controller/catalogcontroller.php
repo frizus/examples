@@ -1,4 +1,5 @@
 <?php
+
 namespace Frizus\Module\Controller;
 
 use Bitrix\Iblock\SectionElementTable;
@@ -16,6 +17,7 @@ use Frizus\Module\Request\CategorySaleLeadersRequest;
 use Frizus\Module\Request\CompareRequest;
 use Frizus\Module\Request\FavoriteRequest;
 use Frizus\Module\Request\RecommendRequest;
+use Throwable;
 
 class CatalogController extends Base
 {
@@ -26,7 +28,7 @@ class CatalogController extends Base
     {
         if ($this->action === 'recommend') {
             return [
-                function() {
+                function () {
                     $this->loadModule('iblock');
                     $this->prepareRequest(RecommendRequest::class, 1);
                     $this->loadModule(['catalog', 'sale']);
@@ -34,14 +36,14 @@ class CatalogController extends Base
             ];
         } elseif ($this->action === 'categorySaleLeaders') {
             return [
-                function() {
+                function () {
                     $this->loadModule('iblock');
                     $this->prepareRequest(CategorySaleLeadersRequest::class, 1);
                 },
             ];
         } elseif ($this->action === 'buy') {
             return [
-                function() {
+                function () {
                     $this->loadModule('iblock');
                     $this->prepareRequest(BuyRequest::class);
                     $this->loadModule(['catalog', 'sale']);
@@ -49,7 +51,7 @@ class CatalogController extends Base
             ];
         } elseif ($this->action === 'favorite') {
             return [
-                function() {
+                function () {
                     $this->loadModule('iblock');
                     $this->prepareRequest(FavoriteRequest::class);
                     $this->loadModule(['catalog', 'sale']);
@@ -57,7 +59,7 @@ class CatalogController extends Base
             ];
         } elseif ($this->action === 'compare') {
             return [
-                function() {
+                function () {
                     $this->loadModule('iblock');
                     $this->prepareRequest(CompareRequest::class);
                     $this->loadModule(['catalog', 'sale']);
@@ -73,10 +75,10 @@ class CatalogController extends Base
         $key = $keyPart . ' ' . $categoryId;
         $ttl = 60 * 60 * 24 * 7;
         $tag = 'iblock_id_' . FRIZUS_CATALOG;
-        $html = Cache::remember($key, $ttl, function() use ($categoryId) {
+        $html = Cache::remember($key, $ttl, function () use ($categoryId) {
             try {
                 $this->loadModule(['iblock', 'catalog', 'sale']);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 Cache::abort();
                 throw $e;
             }
@@ -207,12 +209,12 @@ class CatalogController extends Base
         $key = $keyPart . ' ' . $categoryId;
         $ttl = 60 * 60 * 24 * 7;
         $tag = 'iblock_id_' . FRIZUS_CATALOG;
-        Cache::output($key, $ttl, function() use ($categoryId) {
+        Cache::output($key, $ttl, function () use ($categoryId) {
             try {
                 $this->loadModule('iblock');
                 $this->request->step(2)->validate();
                 $this->loadModule(['catalog', 'sale']);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 Cache::abort();
                 throw $e;
             }
@@ -232,16 +234,16 @@ class CatalogController extends Base
 
     public function buy()
     {
-        
+
     }
 
     public function favorite()
     {
-        
+
     }
 
     public function compare()
     {
-        
+
     }
 }

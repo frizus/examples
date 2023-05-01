@@ -1,4 +1,5 @@
 <?php
+
 namespace Frizus\Module\Helper;
 
 class Str

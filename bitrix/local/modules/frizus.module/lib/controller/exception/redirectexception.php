@@ -1,7 +1,10 @@
 <?php
+
 namespace Frizus\Module\Controller\Exception;
 
-class RedirectException extends \Exception
+use Exception;
+
+class RedirectException extends Exception
 {
     public $redirect;
 

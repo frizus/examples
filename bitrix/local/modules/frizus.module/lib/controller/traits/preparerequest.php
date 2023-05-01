@@ -1,4 +1,5 @@
 <?php
+
 namespace Frizus\Module\Controller\Traits;
 
 use Frizus\Module\Request\Base\Request;

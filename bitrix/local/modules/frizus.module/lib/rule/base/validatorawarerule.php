@@ -4,11 +4,19 @@ namespace Frizus\Module\Rule\Base;
 
 use Frizus\Module\Validation\Validator;
 
-interface ValidatorAwareRule
+trait ValidatorAwareRule
 {
     /**
-     * @param  Validator  $validator
+     * @var Validator
+     */
+    protected $validator;
+
+    /**
+     * @param Validator $validator
      * @return $this
      */
-    public function setValidator($validator);
+    public function setValidator($validator)
+    {
+        $this->validator = $validator;
+    }
 }

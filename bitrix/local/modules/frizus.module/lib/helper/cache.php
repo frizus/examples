@@ -1,4 +1,5 @@
 <?php
+
 namespace Frizus\Module\Helper;
 
 use Bitrix\Main\Application;
@@ -34,6 +35,40 @@ class Cache
         return $value;
     }
 
+    /**
+     * @see https://stackoverflow.com/questions/1976007/what-characters-are-forbidden-in-windows-and-linux-directory-names
+     */
+    public static function dir($dir)
+    {
+        return self::INIT_DIR . '/' . str_replace(
+                [
+                    '<',
+                    '>',
+                    ':',
+                    '"',
+                    '/',
+                    "\\",
+                    '|',
+                    '?',
+                    '*',
+                ],
+                '_',
+                $dir
+            );
+    }
+
+    protected static function tags($tags, $initDir)
+    {
+        if (!is_null($tags)) {
+            $taggedCache = Application::getInstance()->getTaggedCache();
+            $taggedCache->startTagCache($initDir);
+            foreach ((array)$tags as $tag) {
+                $taggedCache->registerTag($tag);
+            }
+            $taggedCache->endTagCache();
+        }
+    }
+
     public static function output($key, $ttl, $callback, $tags = null, $initDir = null)
     {
         $initDir = $initDir ?? self::dir($key);
@@ -62,39 +97,5 @@ class Cache
     {
         $cache = BitrixCache::createInstance();
         $cache->clean($key, $isDir ? $key : self::dir($key));
-    }
-
-    protected static function tags($tags, $initDir)
-    {
-        if (!is_null($tags)) {
-            $taggedCache = Application::getInstance()->getTaggedCache();
-            $taggedCache->startTagCache($initDir);
-            foreach ((array)$tags as $tag) {
-                $taggedCache->registerTag($tag);
-            }
-            $taggedCache->endTagCache();
-        }
-    }
-
-    /**
-     * @see https://stackoverflow.com/questions/1976007/what-characters-are-forbidden-in-windows-and-linux-directory-names
-     */
-    public static function dir($dir)
-    {
-        return self::INIT_DIR . '/' . str_replace(
-            [
-                '<',
-                '>',
-                ':',
-                '"',
-                '/',
-                "\\",
-                '|',
-                '?',
-                '*',
-            ],
-            '_',
-                $dir
-        );
     }
 }

@@ -1,8 +1,9 @@
 <?php
+
 namespace Frizus\Module\Controller;
 
 use Bitrix\Main\Application;
-use Frizus\Module\Request\Base\Request;
+use Throwable;
 
 abstract class Base
 {
@@ -18,11 +19,6 @@ abstract class Base
         $this->internalAction(true);
     }
 
-    public function callAction()
-    {
-        $this->internalAction(false);
-    }
-
     protected function internalAction($beforeAction)
     {
         try {
@@ -35,7 +31,7 @@ abstract class Base
                 }
             }
             $this->{$this->action}();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if (method_exists($e, 'redirectTo')) {
                 $e->redirectTo();
             } elseif (property_exists($e, 'isResponse')) {
@@ -49,6 +45,11 @@ abstract class Base
     public function beforeActionClosures()
     {
         return [];
+    }
+
+    public function callAction()
+    {
+        $this->internalAction(false);
     }
 
     public function renderJson($result)
