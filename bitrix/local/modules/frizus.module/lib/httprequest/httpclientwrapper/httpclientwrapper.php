@@ -1,12 +1,13 @@
 <?
-namespace Frizus\Module\HttpRequest;
 
-use Frizus\Module\Helper\Json;
-use Frizus\Module\Helper\Str;
-use Bitrix\Main\Web\HttpClient;
+namespace Frizus\Module\HttpRequests\HttpClientWrapper;
 
-class Request extends Base
+use Throwable;
+
+class HttpClientWrapper
 {
+    use HttpClientBaseTrait;
+
     public $getBodyStatus;
 
     public $getBodyNotStatus;
@@ -28,11 +29,6 @@ class Request extends Base
     public $query;
 
     public $result;
-
-    /**
-     * @var HttpClient
-     */
-    public $response;
 
     public $status;
 
@@ -69,7 +65,7 @@ class Request extends Base
         $this->cookies = $options['cookies'] ?? [];
     }
 
-    public function request($method, $url, $query = [], $post = [], $attach = [])
+    public function request($method, $url, $query = [], $post = [], $attach = [], $headers = [])
     {
         $this->result = null;
         $this->error = null;
@@ -78,7 +74,7 @@ class Request extends Base
         $this->query = $query;
         $this->url = $this->buildUrl($url, $query);
         try {
-            $result = $this->send($method, $url, $this->options, $query, $post, [], []);
+            $result = $this->send($method, $url, $this->options, $query, $post, [], [], $headers);
             $this->url = $this->response->getEffectiveUrl();
             if (!$result) {
                 if (!$this->noSystemError) {
@@ -103,7 +99,7 @@ class Request extends Base
                     return false;
                 }
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->url = $this->response->getEffectiveUrl();
             if (!$this->noSystemError) {
                 $message = 'Ошибка подключения: ' . $e->getMessage();
@@ -151,56 +147,17 @@ class Request extends Base
         return true;
     }
 
-    public function makeResult()
+    public function addError($message, $errorType = null)
     {
-        if ($this->status === 200) {
-            $this->result = [
-                'status' => 'success',
-            ];
-            return;
-        } elseif (isset($result['error'])) {
-            $this->result = [
-                'status' => 'error',
-                'error' => $result['error'],
-            ];
-            return;
+        $this->error = $message;
+        if (isset($errorType)) {
+            $this->setErrorType($errorType);
         }
-
-        return false;
     }
 
-    public function validateBody()
+    protected function setErrorType($errorType)
     {
-        $this->result = Json::parse($this->result);
-        $this->isNotJson();
-        if ($this->hasError()) return false;
-
-        if ($this->status >= 400) {
-            $this->validateJsonError();
-            if ($this->hasError()) return false;
-        }
-        return true;
-    }
-
-    public function isSuccess()
-    {
-        return !isset($this->error);
-    }
-
-    public function hasError()
-    {
-        return isset($this->error);
-    }
-
-    protected function getStatusType()
-    {
-        if (!is_null($this->statusTypes)) {
-            foreach ($this->statusTypes as $statusType => $statuses) {
-                if (in_array($this->status, $statuses, true)) {
-                    return $statusType;
-                }
-            }
-        }
+        $this->errorType = $errorType;
     }
 
     protected function needToReadBody()
@@ -222,17 +179,56 @@ class Request extends Base
         return $success;
     }
 
-    protected function setErrorType($errorType)
+    protected function getStatusType()
     {
-        $this->errorType = $errorType;
+        if (!is_null($this->statusTypes)) {
+            foreach ($this->statusTypes as $statusType => $statuses) {
+                if (in_array($this->status, $statuses, true)) {
+                    return $statusType;
+                }
+            }
+        }
     }
 
-    public function addError($message, $errorType = null)
+    public function validateBody()
     {
-        $this->error = $message;
-        if (isset($errorType)) {
-            $this->setErrorType($errorType);
+        $this->result = $this->parseJson();
+        $this->isNotJson();
+        if ($this->hasError()) return false;
+
+        if ($this->status >= 400) {
+            $this->validateJsonError();
+            if ($this->hasError()) return false;
         }
+        return true;
+    }
+
+    protected function parseJson()
+    {
+        $result = json_decode($this->result, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    public function isNotJson()
+    {
+        if ($this->result === false) {
+            $this->addError('Пришел не JSON ответ');
+        }
+    }
+
+    public function hasError()
+    {
+        return isset($this->error);
+    }
+
+    public function validateJsonError()
+    {
+        //$this->validateJson(['error'], false);
     }
 
     protected function addResponseInfoToError()
@@ -251,16 +247,22 @@ class Request extends Base
         $this->error .= ': ' . $this->response->getEffectiveUrl();
     }
 
-    public function isNotJson()
+    public function makeResult()
     {
-        if ($this->result === false) {
-            $this->addError('Пришел не JSON ответ');
+        if ($this->status === 200) {
+            $this->result = ['status' => 'success',];
+            return;
+        } elseif (isset($result['error'])) {
+            $this->result = ['status' => 'error', 'error' => $result['error'],];
+            return;
         }
+
+        return false;
     }
 
-    public function validateJsonError()
+    public function isSuccess()
     {
-        //$this->validateJson(['error'], false);
+        return !isset($this->error);
     }
 
     public function validateJson($required, $optional = [], $canHaveOtherFields = true)
@@ -277,12 +279,7 @@ class Request extends Base
                 unset($optional[$key]);
             }
         }
-        $data = [
-            'invalidTypeRequired' => [],
-            'invalidTypeOptional' => [],
-            'missingRequired' => null,
-            'anotherFieldsError' => false,
-        ];
+        $data = ['invalidTypeRequired' => [], 'invalidTypeOptional' => [], 'missingRequired' => null, 'anotherFieldsError' => false,];
         $error = false;
         $haveAnotherFields = false;
 
@@ -292,6 +289,8 @@ class Request extends Base
                 $field = $required[$key];
                 if ($field === 'array') {
                     $success = is_array($value);
+                } elseif ($field === 'string') {
+                    $success = is_string($value);
                 } else {
                     $success = true;
                 }
@@ -304,6 +303,8 @@ class Request extends Base
                 $field = $optional[$key];
                 if ($field === 'array') {
                     $success = is_array($value);
+                } elseif ($field === 'string') {
+                    $success = is_string($value);
                 } else {
                     $success = true;
                 }
@@ -328,11 +329,7 @@ class Request extends Base
 
         if ($error) {
             if (!empty($data['missingRequired'])) {
-                $errors[] = str_replace(
-                    ':fields',
-                    implode(', ', array_keys($data['missingRequired'])),
-                    (count($data['missingRequired']) == 1 ? 'В JSON-ответе отсутствует :fields' : 'В JSON-ответе отсутствуют :fields')
-                );
+                $errors[] = str_replace(':fields', implode(', ', array_keys($data['missingRequired'])), (count($data['missingRequired']) == 1 ? 'В JSON-ответе отсутствует :fields' : 'В JSON-ответе отсутствуют :fields'));
             }
             if (!empty($data['invalidTypeRequired'])) {
                 foreach ($data['invalidTypeRequired'] as $key => $value) {
@@ -351,7 +348,7 @@ class Request extends Base
             $l = count($errors) - 1;
             foreach ($errors as $i => $s) {
                 if ($i == 0) {
-                    $message .= Str::ucfirst($s);
+                    $message .= mb_strtoupper(mb_substr($s, 0, 1)) . mb_substr($s, 1);
                 } elseif ($i == $l) {
                     $message .= ' и ' . $s;
                 } else {

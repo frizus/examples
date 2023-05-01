@@ -1,5 +1,8 @@
 <?php
+
 namespace Frizus\Module\Repository;
+
+use CIBlockSection;
 
 class RecommendSectionsRepository
 {
@@ -16,15 +19,19 @@ class RecommendSectionsRepository
     public function __construct($sectionId, $iblockId)
     {
         $this->sectionId = intval($sectionId);
-        $this->baseFilter = [
-            'ACTIVE' => 'Y',
-            'GLOBAL_ACTIVE' => 'Y',
-            'IBLOCK_ID' => $iblockId,
-            'IBLOCK_ACTIVE' => 'Y',
-            'CHECK_PERMISSIONS' => 'Y',
-            'MIN_PERMISSION' => 'R',
-        ];
+        $this->baseFilter = ['ACTIVE' => 'Y', 'GLOBAL_ACTIVE' => 'Y', 'IBLOCK_ID' => $iblockId, 'IBLOCK_ACTIVE' => 'Y', 'CHECK_PERMISSIONS' => 'Y', 'MIN_PERMISSION' => 'R',];
         $this->initSection();
+    }
+
+    protected function initSection()
+    {
+        $filter = array_merge($this->baseFilter, ['ID' => $this->sectionId,]);
+        $result = CIBlockSection::GetList([], $filter, false, ['ID', 'IBLOCK_SECTION_ID'], false);
+        $section = $result->Fetch();
+        $this->sectionExists = (bool)$section;
+        if ($this->sectionExists) {
+            $this->parentSectionId = intval($section['IBLOCK_SECTION_ID']);
+        }
     }
 
     public function isLastVariant()
@@ -74,14 +81,15 @@ class RecommendSectionsRepository
         }
     }
 
-    protected function getNoSections()
+    protected function getOtherRootSections()
     {
-        return [];
-    }
-
-    protected function getThisParentSection()
-    {
-        return [$this->parentSectionId];
+        $filter = array_merge($this->baseFilter, ['DEPTH_LEVEL' => 1, '!=ID' => $this->sectionId,]);
+        $result = CIBlockSection::GetList([], $filter, false, ['ID'], false);
+        $sectionIds = [];
+        while ($row = $result->Fetch()) {
+            $sectionIds[] = intval($row['ID']);
+        }
+        return !empty($sectionIds) ? $sectionIds : false;
     }
 
     protected function getThisSection()
@@ -91,11 +99,8 @@ class RecommendSectionsRepository
 
     protected function getSiblingSections()
     {
-        $filter = array_merge($this->baseFilter, [
-            'SECTION_ID' => $this->parentSectionId,
-            '!=ID' => $this->sectionId,
-        ]);
-        $result = \CIBlockSection::GetList([], $filter, false, ['ID'], false);
+        $filter = array_merge($this->baseFilter, ['SECTION_ID' => $this->parentSectionId, '!=ID' => $this->sectionId,]);
+        $result = CIBlockSection::GetList([], $filter, false, ['ID'], false);
         $sectionIds = [];
         while ($row = $result->Fetch()) {
             $sectionIds[] = intval($row['ID']);
@@ -103,30 +108,13 @@ class RecommendSectionsRepository
         return !empty($sectionIds) ? $sectionIds : false;
     }
 
-    protected function getOtherRootSections()
+    protected function getThisParentSection()
     {
-        $filter = array_merge($this->baseFilter, [
-            'DEPTH_LEVEL' => 1,
-            '!=ID' => $this->sectionId,
-        ]);
-        $result = \CIBlockSection::GetList([], $filter, false, ['ID'], false);
-        $sectionIds = [];
-        while ($row = $result->Fetch()) {
-            $sectionIds[] = intval($row['ID']);
-        }
-        return !empty($sectionIds) ? $sectionIds : false;
+        return [$this->parentSectionId];
     }
 
-    protected function initSection()
+    protected function getNoSections()
     {
-        $filter = array_merge($this->baseFilter, [
-            'ID' => $this->sectionId,
-        ]);
-        $result = \CIBlockSection::GetList([], $filter, false, ['ID', 'IBLOCK_SECTION_ID'], false);
-        $section = $result->Fetch();
-        $this->sectionExists = (bool)$section;
-        if ($this->sectionExists) {
-            $this->parentSectionId = intval($section['IBLOCK_SECTION_ID']);
-        }
+        return [];
     }
 }

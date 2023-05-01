@@ -2,11 +2,16 @@
 
 namespace Frizus\Module\Rule\Base;
 
-interface DataAwareRule
+trait DataAwareRule
 {
+    protected $data;
+
     /**
-     * @param  array  $data
+     * @param array $data
      * @return $this
      */
-    public function setData($data);
+    public function setData($data)
+    {
+        $this->data = $data;
+    }
 }

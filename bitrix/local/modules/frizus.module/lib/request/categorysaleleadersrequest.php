@@ -1,10 +1,11 @@
 <?php
+
 namespace Frizus\Module\Request;
 
 use Bitrix\Iblock\Elements\ElementCatalogTable;
 use Bitrix\Main\ORM\Query\Result;
+use CIBlockSection;
 use Frizus\Module\Request\Base\AjaxRequest;
-use Frizus\Module\Rule\ValidateProductIdRule;
 
 class CategorySaleLeadersRequest extends AjaxRequest
 {
@@ -41,7 +42,7 @@ class CategorySaleLeadersRequest extends AjaxRequest
     public function validateCategoryId($attribute, $value, $keyExists, $fail)
     {
         $value = $this->processing('categoryId');
-        $rsData = \CIBlockSection::GetList(
+        $rsData = CIBlockSection::GetList(
             [],
             [
                 'ACTIVE' => 'Y',

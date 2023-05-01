@@ -1,7 +1,9 @@
 <?php
+
 namespace Frizus\Module\Cron;
 
 use Frizus\Module\Helper\MessageBag;
+use InvalidArgumentException;
 
 abstract class Cron
 {
@@ -36,26 +38,6 @@ abstract class Cron
         $this->executeBaseOptions();
     }
 
-    public function run()
-    {
-        if ($this->helpCommand) {
-            echo $this->outHelp();
-            exit(0);
-        }
-
-        try {
-            $exitCode = $this->handle();
-        } catch (\InvalidArgumentException $e) {
-            echo $e->getMessage() . "\n\n\n";
-            $this->outHelp();
-            exit(1);
-        }
-
-        exit($exitCode);
-    }
-
-    abstract public function handle();
-
     protected function parseOpts()
     {
         $logFile = strpos($this->logFile, $_SERVER['DOCUMENT_ROOT']) === 0 ? ('<путь до сайта>' . substr($this->logFile, strlen($_SERVER['DOCUMENT_ROOT']))) : $this->logFile;
@@ -89,19 +71,6 @@ abstract class Cron
         }
     }
 
-    public function executeBaseOptions()
-    {
-        if ($this->hasOption('help')) {
-            $this->helpCommand = true;
-        }
-
-        if ($this->hasOption('log-to-file') && isset($this->logFile)) {
-            $this->logToFile();
-        }
-
-        $this->isQuietOutput = $this->hasOption('quiet');
-    }
-
     public function parseArguments()
     {
         $longOptions = [];
@@ -122,23 +91,17 @@ abstract class Cron
         }
     }
 
-    public function hasArgument($name)
+    public function executeBaseOptions()
     {
-        return array_key_exists($name, $this->arguments);
-    }
-
-    public function argument($name)
-    {
-        $this->checkArgument($name);
-
-        return $this->arguments[$name];
-    }
-
-    public function checkArgument($name)
-    {
-        if (!array_key_exists($name, $this->arguments)) {
-            throw new \InvalidArgumentException("Не указан аргумент $name");
+        if ($this->hasOption('help')) {
+            $this->helpCommand = true;
         }
+
+        if ($this->hasOption('log-to-file') && isset($this->logFile)) {
+            $this->logToFile();
+        }
+
+        $this->isQuietOutput = $this->hasOption('quiet');
     }
 
     public function hasOption($name)
@@ -146,18 +109,28 @@ abstract class Cron
         return array_key_exists($name, $this->options);
     }
 
-    public function option($name)
+    public function logToFile()
     {
-        $this->checkOption($name);
-
-        return $this->options[$name];
+        $this->logToFile = true;
+        register_shutdown_function([$this, 'saveLogToFile']);
     }
 
-    public function checkOption($name)
+    public function run()
     {
-        if (!array_key_exists($name, $this->options)) {
-            throw new \InvalidArgumentException("Не указана опция $name");
+        if ($this->helpCommand) {
+            echo $this->outHelp();
+            exit(0);
         }
+
+        try {
+            $exitCode = $this->handle();
+        } catch (InvalidArgumentException $e) {
+            echo $e->getMessage() . "\n\n\n";
+            $this->outHelp();
+            exit(1);
+        }
+
+        exit($exitCode);
     }
 
     public function outHelp()
@@ -224,14 +197,44 @@ abstract class Cron
         echo "\n";
     }
 
+    abstract public function handle();
+
+    public function hasArgument($name)
+    {
+        return array_key_exists($name, $this->arguments);
+    }
+
+    public function argument($name)
+    {
+        $this->checkArgument($name);
+
+        return $this->arguments[$name];
+    }
+
+    public function checkArgument($name)
+    {
+        if (!array_key_exists($name, $this->arguments)) {
+            throw new InvalidArgumentException("Не указан аргумент $name");
+        }
+    }
+
+    public function option($name)
+    {
+        $this->checkOption($name);
+
+        return $this->options[$name];
+    }
+
+    public function checkOption($name)
+    {
+        if (!array_key_exists($name, $this->options)) {
+            throw new InvalidArgumentException("Не указана опция $name");
+        }
+    }
+
     public function text($text, $verbose = false)
     {
         $this->textInternal($text . "\n", '', $verbose);
-    }
-
-    public function error($text, $verbose = false)
-    {
-        $this->textInternal($text . "\n", 'error', $verbose);
     }
 
     protected function textInternal($text, $color, $verbose)
@@ -247,6 +250,11 @@ abstract class Cron
         }
     }
 
+    public function error($text, $verbose = false)
+    {
+        $this->textInternal($text . "\n", 'error', $verbose);
+    }
+
     public function hasErrors()
     {
         return $this->errorBag->isNotEmpty();
@@ -259,12 +267,6 @@ abstract class Cron
                 echo $message . "\n";
             }
         }
-    }
-
-    public function logToFile()
-    {
-        $this->logToFile = true;
-        register_shutdown_function([$this, 'saveLogToFile']);
     }
 
     public function saveLogToFile()

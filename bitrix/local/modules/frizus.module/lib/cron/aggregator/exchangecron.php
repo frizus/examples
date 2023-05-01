@@ -1,10 +1,12 @@
 <?php
+
 namespace Frizus\Module\Cron\Aggregator;
 
 use Frizus\Module\Aggregator\ExchangeProcess;
 use Frizus\Module\Aggregator\UploadExchangeStats;
 use Frizus\Module\Cron\Cron;
 use Frizus\Module\HttpRequest\Requests\Aggregator\ExchangeRequest;
+use Throwable;
 
 class ExchangeCron extends Cron
 {
@@ -52,7 +54,7 @@ class ExchangeCron extends Cron
             $exchangeProcess->requestImportData();
             $uploadStats->setExchangeUri($exchangeProcess->getExchangeUri());
             $exchangeProcess->initAfterRequest();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $uploadStats->setExchangeUri($exchangeProcess->getExchangeUri());
             $uploadStats->failed($e->getMessage());
             if ($this->hasOption('send-failed-report')) {
@@ -75,7 +77,7 @@ class ExchangeCron extends Cron
                     $saved === false ? $importProduct->restore() : null
                 );
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $uploadStats->failed($e->getMessage());
             if ($this->hasOption('send-failed-report') || $uploadStats->haveProductStats()) {
                 $uploadStats->sendFailedReport();
